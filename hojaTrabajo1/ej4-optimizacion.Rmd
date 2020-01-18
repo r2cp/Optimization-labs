@@ -1,0 +1,44 @@
+---
+title: "Hoja de trabajo 1"
+output: html_notebook
+---
+
+```{r}
+library(tibble)
+
+edad <- c(16,25,39,45,49,64,70)
+peso <- c(140, 149, 165, 170, 165, 159, 144)
+presion <- sample(c(110:130), 7)
+
+data <- tibble(Edad = edad, Peso = peso, Presion = presion)
+data
+```
+
+Creamos la función de costo:
+```{r}
+costo.fn <- function(b, data) {
+  b0 <- b[1]
+  b1 <- b[2]
+  b2 <- b[3]
+  costo <- sum((data$Presion - b0 - b1*data$Edad - b2*data$Peso)^2)
+  return(costo)
+}
+
+# Prueba de la función de costo
+costo.fn(c(0,1,1), data)
+```
+
+Ahora vamos a minimizar utilizando la función *optim* del paquete base, que permite optimizar funciones de varias variables.
+
+```{r}
+optimizador <- optim(c(150,0,0), function(x) costo.fn(x, data))
+optimizador
+```
+
+Comparación con un modelo lineal ajustado con la función *lm*:
+
+```{r}
+model <- lm(Presion ~ ., data)
+model$coefficients
+```
+ 
